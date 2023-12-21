@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {useDispatch , useSelector}  from 'react-redux'
 import { signInStart, signInFailure , singInSuccess } from "../redux/user/user.slice";
+import Auth from "../Components/Auth";
 
 function SignIn() {
   const [formData,setFormData] = useState({})
@@ -63,9 +64,7 @@ function SignIn() {
         >
           {loading ? "Loading" : "SIGN IN"}
         </button>
-        <button className="bg-red-700 p-3  rounded-lg  text-white">
-          CONTINUE WITH GOOGLE
-        </button>
+        <Auth />
       </form>
       <div className="flex gap-2 mt-5 ">
         <p>Don't Have an account ?</p>
