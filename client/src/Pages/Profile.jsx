@@ -11,16 +11,22 @@ import {
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
+  deleteUserFailure,
+  deleteUserSuccess,
+  deleteUserStart,
+  signOutFailure,
+  signOutStart,
+  signOutSuccess,
 } from "../redux/user/user.slice";
 
 function Profile() {
-  const { currentUser,loading , error } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePer, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(null);
   const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSucess] = useState(false)
+  const [updateSuccess, setUpdateSucess] = useState(false);
   const Dispatch = useDispatch();
 
   useEffect(() => {
@@ -50,13 +56,45 @@ function Profile() {
         Dispatch(updateUserFailure(data.message));
         return;
       }
+
       Dispatch(updateUserSuccess(data));
-      setUpdateSucess(true)
+      setUpdateSucess(true);
     } catch (error) {
       Dispatch(updateUserFailure(error.message));
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      Dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        Dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      Dispatch(deleteUserSuccess());
+    } catch (error) {}
+  };
+
+  const handleSignOut = async () => {
+    try {
+      Dispatch(signOutStart());
+      const res = await fetch("/api/auth/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.status === false) {
+        Dispatch(signOutFailure(data.message));
+        return;
+      }
+      Dispatch(signOutSuccess());
+    } catch (error) {
+      Dispatch(signOutFailure(error.message));
+    }
+  };
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
@@ -131,21 +169,31 @@ function Profile() {
           className="rounded-lg p-3"
           onChange={handleChange}
         />
-        <button  disabled= {loading}className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
-         {loading? "Loading......" : "Update"} 
+        <button
+          disabled={loading}
+          className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "Loading......" : "Update"}
         </button>
         <button className="p-3 bg-green-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
           create Listing
         </button>
       </form>
       <div className="mt-5 flex justify-between">
-        <span className="text-red-700 cursor-pointer">Delete Account </span>
-        <span className="text-red-700 cursor-pointer">Sign out </span>
+        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          Delete Account{" "}
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign out{" "}
+        </span>
       </div>
-      <p className= 'text-red-800  mt-3 text-base font-medium'>{error ? error : ''}</p>
-      <p className= 'text-green-700 mt-5'>{updateSuccess ? "Updated Successfully" : ''}</p>
+      <p className="text-red-800  mt-3 text-base font-medium">
+        {error ? error : ""}
+      </p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "Updated Successfully" : ""}
+      </p>
     </div>
-    
   );
 }
 

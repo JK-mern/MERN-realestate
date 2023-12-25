@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcrypt from "bcryptjs";
+
 export const updateUserInfo = async (req, res, next) => {
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only update your own account!"));
@@ -21,10 +22,28 @@ export const updateUserInfo = async (req, res, next) => {
       },
       { new: true }
     );
-    console.log(updatedUser);
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
   } catch (error) {
+    if (error.code === 11000) {
+      next(errorHandler(409, "Something went wrong!!!!!!"));
+      return;
+    }
     next(error);
   }
 };
+
+
+export const deleteUser = async(req,res,next) =>{
+  if(req.user.id !== req.params.id)
+    return(next(errorHandler(401, "You can only update your own account!"))) 
+
+    try {
+      await User.findByIdAndDelete(req.params.id)
+      res.clearCookie("accessToken");
+      res.status(200).json("User deleted Successfully! ")
+
+    } catch (error) {
+      next(error)
+    }
+}
