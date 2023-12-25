@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import {
   getDownloadURL,
@@ -175,9 +176,12 @@ function Profile() {
         >
           {loading ? "Loading......" : "Update"}
         </button>
-        <button className="p-3 bg-green-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
+        <Link
+          to={"/create-listing"}
+          className="p-3 bg-green-700 rounded-lg text-center text-white uppercase hover:opacity-95 disabled:opacity-80"
+        >
           create Listing
-        </button>
+        </Link>
       </form>
       <div className="mt-5 flex justify-between">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
@@ -191,7 +195,7 @@ function Profile() {
         {error ? error : ""}
       </p>
       <p className="text-green-700 mt-5">
-        {updateSuccess ? "Updated Successfully" : ""}
+        {updateSuccess ? "Updated Successfully" : " "}
       </p>
     </div>
   );
