@@ -32,14 +32,24 @@ export const updateListing = async (req, res, next) => {
   if (req.user.id !== listing.userRef)
     return next(errorHandler(401, "You can only delete your listings!!!"));
 
-    try {
-      const updateListing = await Listing.findByIdAndUpdate(
-        req.params.id,
-        {$set : req.body},
-        {new : true}
-      )
-      res.status(200).json(updateListing)
-    } catch (error) {
-      next(error)
-    }
+  try {
+    const updateListing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updateListing);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getListing = async (req, res, next) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) return next(errorHandler(401, "Listing Not Found"));
+  try {
+    res.status(200).json(listing)
+  } catch (error) {
+    next(error)
+  }
 };
