@@ -28,6 +28,8 @@ function Profile() {
   const [fileUploadError, setFileUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSucess] = useState(false);
+  const [showListingError, setshowListingError] = useState(false);
+  const [userListing, setUserListing] = useState([]);
   const Dispatch = useDispatch();
 
   useEffect(() => {
@@ -120,6 +122,22 @@ function Profile() {
     );
   };
 
+  const handleShowListing = async () => {
+    try {
+      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (data.message === false) {
+        setshowListingError(true);
+      }
+
+      setUserListing(data);
+    } catch (error) {
+      setshowListingError(true);
+    }
+  };
+
   return (
     <div className="max-w-lg p-3 mx-auto">
       <h1 className="text-center  font-semibold text-3xl my-7">Profile</h1>
@@ -197,6 +215,49 @@ function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "Updated Successfully" : " "}
       </p>
+      <button onClick={handleShowListing} className="w-full text-green-600">
+        Show all listings
+      </button>
+      {showListingError ? (
+        <p className="text-center text-red-600 mt-5 "> Error Showing List </p>
+      ) : (
+        ""
+      )}
+      {userListing && userListing.length > 0 ? (
+        <div className="flex  flex-col mt-5 gap-4">
+          <h1 className="my-7 text-center text-3xl font-bold ">
+            Your Listings
+          </h1>
+          {userListing.map((listing) => (
+            <div
+              key={listing._id}
+              className="flex gap-4 p-3 border rounded-lg justify-between items-center"
+            >
+              <Link to={`/listing/${listing._id}`}>
+                {" "}
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="listingImage"
+                  className="w-16 h-16  object-contain "
+                />{" "}
+              </Link>
+              <Link
+                to={`/listing/${listing._id}`}
+                className="text-slate-800 font-semibold hover:underline truncate flex-1"
+              >
+                {" "}
+                <p>{listing.name}</p>{" "}
+              </Link>
+              <div className=" flex flex-col items-center">
+                <button className="text-red-700 text-lg uppercase">
+                  Delete
+                </button>
+                <button className="text-green-700 uppercase">Edit</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : userListing.length <0 ? <p className="text-red-700 text-center">No Listing to Show</p> : '' }
     </div>
   );
 }
