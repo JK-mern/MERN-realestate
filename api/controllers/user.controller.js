@@ -60,3 +60,13 @@ export const getUserListing = async (req,res,next) =>{
     next(error)
   }
 }
+
+export const deleteUserListing = async(req,res,next) =>{
+
+  if(req.user.id !== req.parama.id)
+  try {
+    
+  } catch (error) {
+    next(error)
+  }
+}
