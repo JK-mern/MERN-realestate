@@ -139,12 +139,13 @@ function Profile() {
   };
 
   const handleDeleteListing = async (id) => {
+    console.log(id)
     try {
       const res = await fetch(`api/listing/delete/${id}`, {
         method: "DELETE",
       });
-      const data = res.json();
-      setUserListing((curr) => curr.filter((listing) => listing._id !== id));
+      const data = await res.json();
+      setUserListing((prev) => prev.filter((listing) => listing._id !== id));
     } catch (error) {
       console.log(error.message);
     }
@@ -267,13 +268,13 @@ function Profile() {
                 >
                   Delete
                 </button>
-                <Link to={`/update-listing/${listing._id}`}><button className="text-green-700 uppercase">Edit</button></Link>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 uppercase">Edit</button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
-      ) : userListing.length < 0 ? (
-        <p className="text-red-700 text-center">No Listing to Show</p>
       ) : (
         ""
       )}

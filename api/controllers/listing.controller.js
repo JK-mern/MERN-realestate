@@ -12,13 +12,14 @@ export const createListing = async (req, res, next) => {
 
 export const deleteListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
-
+  console.log(req.params.id)
+  console.log(listing)
   if (!listing) return next(errorHandler(401, "Listing Not Found"));
 
   if (req.user.id !== listing.userRef)
     return next(errorHandler(401, "You can only delete your listings!!!"));
   try {
-    await Listing.findOneAndDelete(req.params.id);
+    await Listing.findByIdAndDelete(req.params.id);
     res.status(200).json("Listing has been Deleted !");
   } catch (error) {
     next(error);
