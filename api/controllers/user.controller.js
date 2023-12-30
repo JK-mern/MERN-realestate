@@ -34,39 +34,40 @@ export const updateUserInfo = async (req, res, next) => {
   }
 };
 
-
-export const deleteUser = async(req,res,next) =>{
-  if(req.user.id !== req.params.id)
-    return(next(errorHandler(401, "You can only update your own account!"))) 
-
-    try {
-      await User.findByIdAndDelete(req.params.id)
-      res.clearCookie("accessToken");
-      res.status(200).json("User deleted Successfully! ")
-
-    } catch (error) {
-      next(error)
-    }
-}
-
-export const getUserListing = async (req,res,next) =>{
-  
-  if(req.user.id !== req.params.id) return next(errorHandler(401, "You can only view your own listing"))
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, "You can only update your own account!"));
 
   try {
-      const listing = await Listing.find({userRef : req.params.id})
-      res.status(200).json(listing)
+    await User.findByIdAndDelete(req.params.id);
+    res.clearCookie("accessToken");
+    res.status(200).json("User deleted Successfully! ");
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const deleteUserListing = async(req,res,next) =>{
+export const getUserListing = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, "You can only view your own listing"));
 
-  if(req.user.id !== req.parama.id)
   try {
-    
+    const listing = await Listing.find({ userRef: req.params.id });
+    res.status(200).json(listing);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) return next(errorHandler(404, "User not found!"));
+    console.log(user);
+    const { password: pass, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
