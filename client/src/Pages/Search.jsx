@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Listingitem from "../Components/Listingitem";
 
 function Search() {
   const navigate = useNavigate();
@@ -12,8 +13,8 @@ function Search() {
     sort: "created_at",
     order: "desc",
   });
-  const [loading, setLoading] = useState(false)
-  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState([]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -45,23 +46,22 @@ function Search() {
       });
     }
 
-    const fetchListings = async() =>{
+    const fetchListings = async () => {
       try {
-          setLoading(true)
-          const searchQuery = urlParams.toString()
-          const res = await fetch (`/api/listing/get?${searchQuery}`, {
-            method : "GET",
-          })
-          const data = await res.json()
-          setListings(data)
-          setLoading(false)
+        setLoading(true);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/listing/get?${searchQuery}`, {
+          method: "GET",
+        });
+        const data = await res.json();
+        setListings(data);
+        setLoading(false);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
 
-    fetchListings ()
-
+    fetchListings();
   }, [location.search]);
 
   const handleChange = (e) => {
@@ -211,11 +211,30 @@ function Search() {
           </button>
         </form>
       </div>
-      <div className="">
+      <div className="flex-1">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
           {" "}
           Listing Results :{" "}
         </h1>
+        <div className=" p-7  flex flex-wrap gap-4">
+          {!loading && listings.length === 0 ? (
+            <p className="text-xl text-slate-700">No listing found!</p>
+          ) : (
+            ""
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {
+            !loading && listings ? (
+              listings.map ((listing) => (
+                <Listingitem key={listing._id} listing={listing} />
+              ) )
+            ) : ''
+          }
+        </div>
       </div>
     </div>
   );
