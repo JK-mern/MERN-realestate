@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function Header() {
   const { currentUser } = useSelector((state) => state.user);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const handleChange = (e) => {
     setSearchTerm(e.target.value);
@@ -14,7 +14,9 @@ function Header() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParam = new URLSearchParams(window.location.search);
+    if(searchTerm !== null)
     urlParam.set("searchTerm", searchTerm);
+    console.log(searchTerm)
 
     const searchQuery = urlParam.toString();
     navigate(`/search?${searchQuery}`);
