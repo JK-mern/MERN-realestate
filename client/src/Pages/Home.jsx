@@ -53,7 +53,7 @@ function Home() {
         </h1>
         <div>
           <p className="text-gray-400  text-xs lg:text-sm">
-            JK Properties will help you find your home fast, easy and
+            VillaVista will help you find your home fast, easy and
             comfortable.
             <br />
             Our expert support are always available.
